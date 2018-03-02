@@ -31,6 +31,7 @@ import org.apache.zookeeper.Watcher.Event.KeeperState;
 import org.apache.zookeeper.ZooDefs;
 import org.apache.zookeeper.data.Stat;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -91,6 +92,16 @@ public class ZKClientTest {
         zkClient6.close();
         zkClient7.close();
     }
+
+
+    @Test
+    public void testZKClientBuilder() {
+        String address = "localhost:2181";
+        ZKClient zkClient = new ZKClient(address);
+        List<String> children = zkClient.getChildren("/");
+        System.out.println(children.size());
+    }
+
     
     @Test
     public void testZKClientStartTimeout(){
