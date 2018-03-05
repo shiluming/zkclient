@@ -71,8 +71,12 @@ public class DistributedLock implements Lock, Watcher{
             }
         }
 
-
-
+        if (this.tryLock()) {
+            System.out.println(Thread.currentThread().getName() + " " + lockName + " 获得了锁");
+            return;
+        } else {
+            waitForLock(WAIT_LOCK, SESSION_TIMEOUT);
+        }
     }
 
     @Override
@@ -129,11 +133,21 @@ public class DistributedLock implements Lock, Watcher{
         if (this.tryLock()) {
             return true;
         }
-        return false;
+        return waitForLock(WAIT_LOCK, time);
     }
 
     @Override
     public void unlock() {
+        System.out.println("释放锁 " + CURRENT_LOCK);
+        try {
+            zooKeeper.delete(CURRENT_LOCK, -1);
+            CURRENT_LOCK = null;
+            zooKeeper.close();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (KeeperException e) {
+            e.printStackTrace();
+        }
 
     }
 
